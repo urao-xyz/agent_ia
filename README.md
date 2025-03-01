@@ -111,22 +111,6 @@ Vous pouvez ajuster les paramètres suivants dans le code :
 
 ---
 
-## Améliorations Possibles
-
-1. **Ajouter des Statistiques**
-   - Afficher des informations comme la distance moyenne à la cible ou le nombre de collisions.
-
-2. **Comportements Hiérarchiques**
-   - Ajouter un leader que les autres agents suivent.
-
-3. **Personnalisation en Temps Réel**
-   - Permettre à l'utilisateur de modifier les paramètres (vitesse, nombre d'agents) pendant la simulation.
-
-4. **Environnement Complexe**
-   - Ajouter des murs, des portes, ou des zones interdites.
-
----
-
 ## Conclusion
 
 Ce programme est une démonstration simple mais puissante de la simulation de comportements complexes à partir de règles d'IA basiques. Il peut être utilisé comme base pour des projets plus avancés, comme des simulations de foule, des jeux vidéo, ou des modèles de trafic.
