@@ -25,6 +25,7 @@ ORANGE = (255, 165, 0)
 
 # Classe Agent
 class Agent:
+    agents = []
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -36,6 +37,8 @@ class Agent:
         self.repulsion_strength = 0.5  # Force de répulsion
         self.cohesion_strength = 0.1   # Force de groupe
         self.target_strength = 0.2     # Force vers la cible
+        # Ajouter l'agent à la liste des agents
+        Agent.agents.append(self)
 
     def move(self, target, predator, obstacles):
         # Initialiser les forces
@@ -90,11 +93,16 @@ class Agent:
 
     def calculate_avoidance_force(self):
         fx, fy = 0, 0
-        for other in agents:
+        for other in Agent.agents:
             if other != self:
                 dx = self.x - other.x
                 dy = self.y - other.y
                 distance = math.hypot(dx, dy)
+                
+                # Éviter la division par zéro
+                if distance < 1e-6:  # Si la distance est très petite (presque nulle)
+                    continue  # Ignorer cet agent
+                
                 if distance < self.repulsion_radius:
                     weight = 1 - (distance / self.repulsion_radius)
                     fx += (dx / distance) * weight
@@ -103,7 +111,7 @@ class Agent:
 
     def calculate_cohesion_force(self):
         avg_x, avg_y, count = 0, 0, 0
-        for other in agents:
+        for other in Agent.agents:  # Utiliser la variable de classe
             if other != self:
                 distance = math.hypot(self.x - other.x, self.y - other.y)
                 if distance < GROUP_RADIUS:

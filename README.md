@@ -126,3 +126,4 @@ N'hésitez pas à explorer et à modifier le code pour l'adapter à vos besoins 
 ### Execution
 ```bash
 python agent_ia.py
+python -m unittest test_agent_ia.py
