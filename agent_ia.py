@@ -29,8 +29,8 @@ class Agent:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.dx = random.uniform(-1, 1)
-        self.dy = random.uniform(-1, 1)
+        self.dx = random.uniform(-1, 1)  # Direction aléatoire en x
+        self.dy = random.uniform(-1, 1)  # Direction aléatoire en y
         self.speed = MAX_SPEED
         # Nouveaux paramètres
         self.repulsion_radius = AGENT_RADIUS * 3  # Zone de répulsion
@@ -70,10 +70,10 @@ class Agent:
         fy += obstacle_vector[1]
 
         # Normaliser et appliquer la direction
-        length = math.hypot(fx, fy)
+        length = math.hypot(fx, fy)  # Calcul de la longueur du vecteur force
         if length > 0:
-            self.dx = fx / length
-            self.dy = fy / length
+            self.dx = fx / length  # Normalisation de la direction en x
+            self.dy = fy / length  # Normalisation de la direction en y
 
         # Appliquer le mouvement
         self.x += self.dx * self.speed
@@ -84,57 +84,57 @@ class Agent:
         self.y = max(AGENT_RADIUS, min(WINDOW_HEIGHT - AGENT_RADIUS, self.y))
 
     def calculate_target_force(self, target):
-        dx = target[0] - self.x
-        dy = target[1] - self.y
-        distance = math.hypot(dx, dy)
+        dx = target[0] - self.x  # Différence en x entre la cible et l'agent
+        dy = target[1] - self.y  # Différence en y entre la cible et l'agent
+        distance = math.hypot(dx, dy)  # Distance euclidienne entre l'agent et la cible
         if distance > 0:
-            return (dx / distance, dy / distance)
+            return (dx / distance, dy / distance)  # Vecteur unitaire vers la cible
         return (0, 0)
 
     def calculate_avoidance_force(self):
         fx, fy = 0, 0
         for other in Agent.agents:
             if other != self:
-                dx = self.x - other.x
-                dy = self.y - other.y
-                distance = math.hypot(dx, dy)
+                dx = self.x - other.x  # Différence en x entre les agents
+                dy = self.y - other.y  # Différence en y entre les agents
+                distance = math.hypot(dx, dy)  # Distance euclidienne entre les agents
                 
                 # Éviter la division par zéro
                 if distance < 1e-6:  # Si la distance est très petite (presque nulle)
                     continue  # Ignorer cet agent
                 
                 if distance < self.repulsion_radius:
-                    weight = 1 - (distance / self.repulsion_radius)
-                    fx += (dx / distance) * weight
-                    fy += (dy / distance) * weight
+                    weight = 1 - (distance / self.repulsion_radius)  # Poids de la force de répulsion
+                    fx += (dx / distance) * weight  # Ajouter la force en x
+                    fy += (dy / distance) * weight  # Ajouter la force en y
         return (fx, fy)
 
     def calculate_cohesion_force(self):
         avg_x, avg_y, count = 0, 0, 0
         for other in Agent.agents:  # Utiliser la variable de classe
             if other != self:
-                distance = math.hypot(self.x - other.x, self.y - other.y)
+                distance = math.hypot(self.x - other.x, self.y - other.y)  # Distance entre les agents
                 if distance < GROUP_RADIUS:
-                    avg_x += other.x
-                    avg_y += other.y
-                    count += 1
+                    avg_x += other.x  # Somme des positions x des agents proches
+                    avg_y += other.y  # Somme des positions y des agents proches
+                    count += 1  # Nombre d'agents proches
         if count > 0:
-            avg_x /= count
-            avg_y /= count
-            dx = avg_x - self.x
-            dy = avg_y - self.y
-            distance = math.hypot(dx, dy)
+            avg_x /= count  # Moyenne des positions x
+            avg_y /= count  # Moyenne des positions y
+            dx = avg_x - self.x  # Différence en x entre la moyenne et l'agent
+            dy = avg_y - self.y  # Différence en y entre la moyenne et l'agent
+            distance = math.hypot(dx, dy)  # Distance entre l'agent et la moyenne
             if distance > 0:
-                return (dx / distance, dy / distance)
+                return (dx / distance, dy / distance)  # Vecteur unitaire vers la moyenne
         return (0, 0)
 
     def calculate_predator_force(self, predator):
-        dx = self.x - predator.x
-        dy = self.y - predator.y
-        distance = math.hypot(dx, dy)
+        dx = self.x - predator.x  # Différence en x entre l'agent et le prédateur
+        dy = self.y - predator.y  # Différence en y entre l'agent et le prédateur
+        distance = math.hypot(dx, dy)  # Distance euclidienne entre l'agent et le prédateur
         if distance < DANGER_RADIUS:
-            strength = 1.5 * (1 - distance / DANGER_RADIUS)
-            return (dx / distance * strength, dy / distance * strength)
+            strength = 1.5 * (1 - distance / DANGER_RADIUS)  # Force de fuite proportionnelle à la distance
+            return (dx / distance * strength, dy / distance * strength)  # Vecteur de fuite
         return (0, 0)
 
     def calculate_obstacle_force(self, obstacles):
@@ -145,13 +145,13 @@ class Agent:
             else:
                 ox, oy = obstacle.x, obstacle.y
             
-            dx = self.x - ox
-            dy = self.y - oy
-            distance = math.hypot(dx, dy)
+            dx = self.x - ox  # Différence en x entre l'agent et l'obstacle
+            dy = self.y - oy  # Différence en y entre l'agent et l'obstacle
+            distance = math.hypot(dx, dy)  # Distance euclidienne entre l'agent et l'obstacle
             if distance < OBSTACLE_RADIUS + AGENT_RADIUS:
-                weight = 1 - (distance / (OBSTACLE_RADIUS + AGENT_RADIUS))
-                fx += (dx / distance) * weight
-                fy += (dy / distance) * weight
+                weight = 1 - (distance / (OBSTACLE_RADIUS + AGENT_RADIUS))  # Poids de la force d'évitement
+                fx += (dx / distance) * weight  # Ajouter la force en x
+                fy += (dy / distance) * weight  # Ajouter la force en y
         return (fx, fy)
 
     def draw(self, screen):
@@ -162,8 +162,8 @@ class Predator:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.dx = random.uniform(-1, 1)
-        self.dy = random.uniform(-1, 1)
+        self.dx = random.uniform(-1, 1)  # Direction aléatoire en x
+        self.dy = random.uniform(-1, 1)  # Direction aléatoire en y
         self.speed = MAX_SPEED * 1.5  # Le prédateur est plus rapide
 
     def move(self):
@@ -185,8 +185,8 @@ class DynamicObstacle:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.dx = random.uniform(-1, 1)
-        self.dy = random.uniform(-1, 1)
+        self.dx = random.uniform(-1, 1)  # Direction aléatoire en x
+        self.dy = random.uniform(-1, 1)  # Direction aléatoire en y
         self.speed = MAX_SPEED * 0.5  # Les obstacles se déplacent plus lentement
 
     def move(self):
@@ -275,4 +275,3 @@ while running:
 
 # Quitter Pygame
 pygame.quit()
-
